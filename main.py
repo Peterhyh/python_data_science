@@ -6,7 +6,7 @@ conn = pg2.connect(database=classified.psql_database,
 
 cur = conn.cursor()
 
-cur.execute('SELECT * FROM payment')
+cur.execute(classified.psql_query)
 
 print(cur.fetchone())
 
