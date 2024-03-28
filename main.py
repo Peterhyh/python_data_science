@@ -4,7 +4,8 @@ import psycopg2 as pg2
 database = ''
 username = ''
 password = ''
-query = ''
+column = ''
+table = ''
 user_purpose = 0
 
 
@@ -12,11 +13,13 @@ def setCredentials():
     global database
     global username
     global password
-    global query
+    global column
+    global table
     database = database_entry.get()
     username = username_entry.get()
     password = password_entry.get()
-    query = query_entry.get()
+    column = column_entry.get()
+    table = table_entry.get()
 
 
 def hideLogin():
@@ -30,9 +33,11 @@ def hideLogin():
 
 
 def showQuery():
-    query_label.grid(column=0, row=5)
-    query_entry.grid(column=1, row=5)
-    query_button.grid(column=0, row=7)
+    column_label.grid(column=0, row=5)
+    column_entry.grid(column=1, row=5)
+    table_label.grid(column=0, row=6)
+    table_entry.grid(column=1, row=6)
+    query_button.grid(column=1, row=10)
     purpose_label.grid(column=0, row=2)
     purpose_search.grid(column=1, row=2)
     purpose_create.grid(column=2, row=2)
@@ -49,18 +54,20 @@ def connectDatabase():
     conn = pg2.connect(database=database,
                        user=username, password=password)
     cur = conn.cursor()
-    if query:
+    if column:
         runQuery(cur=cur)
     conn.close()
 
 
 def runQuery(cur):
+    global column
+    global table
     if user_purpose == '1':
-        cur.execute("SELECT " + query)
+        cur.execute("SELECT " + column + " FROM " + table)
         query_array = cur.fetchall()
         print(query_array[0])
     elif user_purpose == '2':
-        cur.execute("CREATE TABLE " + query)
+        cur.execute("CREATE TABLE " + column + " FROM " + table)
         query_array = cur.fetchall()
         print(query_array[0])
 
@@ -83,9 +90,9 @@ def handlePCreate():
 
 
 window = Tk()
-window.config(pady=50, padx=150)
+window.config(pady=10, padx=10)
 window.title('Data Science')
-window.geometry('650x300')
+window.geometry('600x300')
 
 database_label = Label(text='Database: ')
 database_label.grid(column=0, row=1)
@@ -110,11 +117,7 @@ login_button.grid(column=1, row=4)
 
 
 # After login:
-query_label = Label(text='Query: ')
-query_label.grid_forget()
 
-query_entry = Entry()
-query_entry.grid_forget()
 
 purpose_label = Label(text="What would you like to perform?")
 purpose_label.grid_forget()
@@ -124,9 +127,20 @@ purpose_search = Radiobutton(
     window, text='Search', variable=var, value=1, command=handlePSearch)
 purpose_search.grid_forget()
 purpose_create = Radiobutton(
-    window, text='Create', variable=var, value=2, command=handlePCreate)
+    window, text='Create table', variable=var, value=2, command=handlePCreate)
 purpose_create.grid_forget()
 
+column_label = Label(text='Column(s): ')
+column_label.grid_forget()
+
+column_entry = Entry()
+column_entry.grid_forget()
+
+table_label = Label(text='Table: ')
+table_label.grid_forget()
+
+table_entry = Entry()
+table_entry.grid_forget()
 
 query_button = Button(text='Query', command=handleQuery)
 query_button.grid_forget()
