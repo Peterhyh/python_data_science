@@ -1,14 +1,24 @@
 from tkinter import *
 import psycopg2 as pg2
 
+database = ''
+username = ''
+password = ''
+query = ''
 
-def handleLogin():
+
+def setCredentials():
+    global database
+    global username
+    global password
+    global query
     database = database_entry.get()
     username = username_entry.get()
     password = password_entry.get()
     query = query_entry.get()
-    connectDatabase(database=database, password=password,
-                    username=username, query=query)
+
+
+def hideLogin():
     database_label.grid_forget()
     database_entry.grid_forget()
     username_label.grid_forget()
@@ -16,30 +26,40 @@ def handleLogin():
     password_label.grid_forget()
     password_entry.grid_forget()
     login_button.grid_forget()
+
+
+def showQuery():
     query_label.grid(column=0, row=1)
     query_entry.grid(column=1, row=1)
     query_button.grid(column=1, row=2)
 
 
-def connectDatabase(database, username, password, query):
+def handleLogin():
+    setCredentials()
+    connectDatabase()
+    hideLogin()
+    showQuery()
+
+
+def connectDatabase():
     conn = pg2.connect(database=database,
                        user=username, password=password)
     cur = conn.cursor()
     if query:
-        cur.execute(query)
-        query_array = cur.fetchall()
-        for item in query_array:
-            print(item)
+        runQuery(cur=cur)
     conn.close()
 
 
+def runQuery(cur):
+    cur.execute(query)
+    query_array = cur.fetchall()
+    for item in query_array:
+        print(item)
+
+
 def handleQuery():
-    database = database_entry.get()
-    username = username_entry.get()
-    password = password_entry.get()
-    query = query_entry.get()
-    connectDatabase(database=database, password=password,
-                    username=username, query=query)
+    setCredentials()
+    connectDatabase()
 
 
 window = Tk()
@@ -65,9 +85,6 @@ password_label.grid(column=0, row=3)
 password_entry = Entry()
 password_entry.grid(column=1, row=3)
 
-login_button = Button(text='Login', command=handleLogin)
-login_button.grid(column=1, row=4)
-
 
 # After login:
 query_label = Label(text='Query: ')
@@ -75,6 +92,10 @@ query_label.grid_forget()
 
 query_entry = Entry()
 query_entry.grid_forget()
+
+
+login_button = Button(text='Login', command=handleLogin)
+login_button.grid(column=1, row=4)
 
 query_button = Button(text='Query', command=handleQuery)
 query_button.grid_forget()
