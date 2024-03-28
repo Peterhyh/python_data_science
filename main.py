@@ -90,7 +90,7 @@ def handlePCreate():
 
 
 window = Tk()
-window.config(pady=10, padx=10)
+window.config(pady=20, padx=20)
 window.title('Data Science')
 window.geometry('600x300')
 
