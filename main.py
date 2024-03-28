@@ -45,7 +45,7 @@ def handleQuery():
 window = Tk()
 window.config(pady=50, padx=150)
 window.title('Data Science')
-window.geometry('650x250')
+window.geometry('650x300')
 
 database_label = Label(text='Database: ')
 database_label.grid(column=0, row=1)
