@@ -5,6 +5,7 @@ database = ''
 username = ''
 password = ''
 query = ''
+user_purpose = 0
 
 
 def setCredentials():
@@ -29,9 +30,12 @@ def hideLogin():
 
 
 def showQuery():
-    query_label.grid(column=0, row=1)
-    query_entry.grid(column=1, row=1)
-    query_button.grid(column=1, row=2)
+    query_label.grid(column=0, row=5)
+    query_entry.grid(column=1, row=5)
+    query_button.grid(column=0, row=7)
+    purpose_label.grid(column=0, row=2)
+    purpose_search.grid(column=1, row=2)
+    purpose_create.grid(column=2, row=2)
 
 
 def handleLogin():
@@ -51,15 +55,31 @@ def connectDatabase():
 
 
 def runQuery(cur):
-    cur.execute(query)
-    query_array = cur.fetchall()
-    for item in query_array:
-        print(item)
+    if user_purpose == '1':
+        cur.execute("SELECT " + query)
+        query_array = cur.fetchall()
+        print(query_array[0])
+    elif user_purpose == '2':
+        cur.execute("CREATE TABLE " + query)
+        query_array = cur.fetchall()
+        print(query_array[0])
 
 
 def handleQuery():
     setCredentials()
     connectDatabase()
+
+
+def handlePSearch():
+    global var
+    global user_purpose
+    user_purpose = var.get()
+
+
+def handlePCreate():
+    global var
+    global user_purpose
+    user_purpose = var.get()
 
 
 window = Tk()
@@ -85,6 +105,9 @@ password_label.grid(column=0, row=3)
 password_entry = Entry()
 password_entry.grid(column=1, row=3)
 
+login_button = Button(text='Login', command=handleLogin)
+login_button.grid(column=1, row=4)
+
 
 # After login:
 query_label = Label(text='Query: ')
@@ -93,9 +116,17 @@ query_label.grid_forget()
 query_entry = Entry()
 query_entry.grid_forget()
 
+purpose_label = Label(text="What would you like to perform?")
+purpose_label.grid_forget()
 
-login_button = Button(text='Login', command=handleLogin)
-login_button.grid(column=1, row=4)
+var = StringVar()
+purpose_search = Radiobutton(
+    window, text='Search', variable=var, value=1, command=handlePSearch)
+purpose_search.grid_forget()
+purpose_create = Radiobutton(
+    window, text='Create', variable=var, value=2, command=handlePCreate)
+purpose_create.grid_forget()
+
 
 query_button = Button(text='Query', command=handleQuery)
 query_button.grid_forget()
