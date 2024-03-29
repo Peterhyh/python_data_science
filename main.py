@@ -46,17 +46,22 @@ def showQuery():
 def handleLogin():
     setCredentials()
     connectDatabase()
-    hideLogin()
-    showQuery()
 
 
 def connectDatabase():
-    conn = pg2.connect(database=database,
-                       user=username, password=password)
-    cur = conn.cursor()
-    if column:
-        runQuery(cur=cur)
-    conn.close()
+    try:
+        conn = pg2.connect(database=database, user=username, password=password)
+    except:
+        print('Incorrect information provided')
+    else:
+        print('Successfully connected to database')
+        hideLogin()
+        showQuery()
+        cur = conn.cursor()
+        if column and table and user_purpose != 0:
+            runQuery(cur=cur)
+        conn.close()
+        print('Database closed out')
 
 
 def runQuery(cur):
