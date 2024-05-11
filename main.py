@@ -52,7 +52,7 @@ def connectDatabase():
     try:
         conn = pg2.connect(database=database, user=username, password=password)
     except:
-        print('Entry Denied')
+        print('Access Denied')
     else:
         print('Successfully connected to database')
         hideLogin()
